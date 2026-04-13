@@ -6,59 +6,71 @@
     <title>Events | Quantum Club GCEK</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
         body { 
-            background-color: #020617; /* Deep Navy */
-            color: #ffffff; 
+            background-color: #ffffff; 
+            color: #111827; /* gray-900 */
             font-family: 'Inter', sans-serif;
         }
 
-        /* Event Card Styles */
+        /* Event Card Styles - White theme */
         .event-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid #334155;
-            transition: all 0.4s ease;
+            background: #ffffff;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .event-card:hover {
-            border-color: #10b981; /* Green accent */
+            border-color: #0ea5e9; /* Brand Blue */
             transform: translateY(-5px);
-            background: rgba(16, 185, 129, 0.05);
-            box-shadow: 0 20px 40px -20px rgba(59, 130, 246, 0.4); /* Blue glow */
+            background: #f0f9ff; /* sky-50 */
+            box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 0 10px 10px -5px rgba(14, 165, 233, 0.04);
         }
 
         /* Reader Styles */
         .event-header-title { 
             font-size: 3.5rem; 
             font-weight: 900; 
-            line-height: 1; 
+            line-height: 1.1; 
             margin-bottom: 1.5rem; 
-            background: linear-gradient(90deg, #3b82f6, #10b981); /* Blue to Green */
+            background: linear-gradient(90deg, #0ea5e9, #10b981); /* Blue to Green */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .event-badge {
-            padding: 4px 12px;
+            padding: 6px 16px;
             background: #10b981; /* Green */
-            color: #020617;
+            color: #ffffff;
             border-radius: 99px;
             font-size: 0.75rem;
-            font-weight: 800;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
-        .text-accent { color: #3b82f6; } /* Blue Accent */
+        .text-accent { color: #0ea5e9; } /* Brand Blue */
         .hidden { display: none; }
-        .glass-nav { backdrop-filter: blur(16px); background: rgba(2, 6, 23, 0.8); border-bottom: 1px solid #1e293b; }
+        .glass-nav { 
+            backdrop-filter: blur(16px); 
+            background: rgba(255, 255, 255, 0.8); 
+            border-bottom: 1px solid #f3f4f6; 
+        }
+
+        /* Custom Markdown styling for light theme */
+        .prose-custom { color: #374151; }
+        .prose-custom h1, .prose-custom h2, .prose-custom h3 { color: #111827; font-weight: 700; margin-top: 1.5em; }
+        .prose-custom p { margin-bottom: 1em; line-height: 1.8; }
     </style>
 </head>
 <body class="antialiased">
 
     <nav class="fixed top-0 w-full z-50 glass-nav px-6 py-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <a href="/" class="font-black tracking-tighter text-xl text-white">QUANTUM CLUB<span class="text-emerald-500">.</span></a>
-            <button id="back-btn" onclick="showGrid()" class="hidden text-sm font-bold text-blue-400 hover:text-emerald-400 transition">
+            <a href="/" class="font-black tracking-tighter text-xl text-gray-900 uppercase">
+                QUANTUM CLUB<span class="text-brand-green text-emerald-500">.</span>
+            </a>
+            <button id="back-btn" onclick="showGrid()" class="hidden text-sm font-bold text-sky-600 hover:text-emerald-600 transition flex items-center gap-2">
                 ← BACK TO EVENTS
             </button>
         </div>
@@ -68,22 +80,25 @@
         <div class="max-w-6xl mx-auto">
             <div id="grid-view">
                 <header class="max-w-2xl mb-16">
-                    <h1 class="text-5xl font-black mb-6 text-white">Upcoming <span class="text-emerald-500">&</span> Past Events</h1>
-                    <p class="text-slate-400 text-lg">Join our workshops and technical symposiums at GCE Kannur.</p>
+                    <h1 class="text-5xl font-black mb-6 text-gray-950 tracking-tight">
+                        Upcoming <span class="text-emerald-500">&</span> Past Events
+                    </h1>
+                    <p class="text-gray-500 text-lg">Discover workshops, hackathons, and technical symposiums hosted by Quantum Club GCE Kannur.</p>
                 </header>
                 <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="col-span-full py-20 text-center text-slate-500 animate-pulse italic">Synchronizing...</div>
+                    <div class="col-span-full py-20 text-center text-gray-400 animate-pulse italic">Synchronizing event data...</div>
                 </div>
             </div>
 
             <div id="reader-view" class="hidden max-w-3xl mx-auto">
-                <article id="event-body" class="text-slate-200 leading-relaxed text-lg">
+                <article id="event-body" class="text-gray-800 leading-relaxed text-lg">
                     </article>
             </div>
         </div>
     </main>
 
     <script>
+        // Use your organization and repo names
         const GITHUB_ORG = 'quantum-club-repo'; 
         const REPO_NAME = 'quantum-club-site';
         
@@ -104,7 +119,7 @@
             gridView.classList.add('hidden');
             readerView.classList.remove('hidden');
             backBtn.classList.remove('hidden');
-            eventBody.innerHTML = "<p class='text-blue-400 text-center py-20'>Loading Event...</p>";
+            eventBody.innerHTML = "<p class='text-sky-600 text-center py-20 font-medium'>Accessing event files...</p>";
 
             try {
                 const response = await fetch(downloadUrl);
@@ -123,40 +138,53 @@
                 }
 
                 eventBody.innerHTML = `
-                    <div class="mb-4"><span class="event-badge">Technical Event</span></div>
-                    <h1 class="event-header-title">${meta.title || 'Event'}</h1>
-                    <p class="text-blue-400 font-bold mb-8 uppercase tracking-widest text-sm">${meta.date ? new Date(meta.date).toDateString() : ''}</p>
-                    ${meta.thumbnail ? `<img src="${meta.thumbnail}" class="w-full rounded-2xl mb-10 border border-slate-800 shadow-2xl">` : ''}
-                    <div class="prose prose-invert max-w-none">
+                    <div class="mb-6"><span class="event-badge">Technical Insight</span></div>
+                    <h1 class="event-header-title">${meta.title || 'Event Details'}</h1>
+                    <p class="text-sky-600 font-bold mb-8 uppercase tracking-widest text-sm">
+                        ${meta.date ? new Date(meta.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Date TBA'}
+                    </p>
+                    ${meta.thumbnail ? `<img src="${meta.thumbnail}" class="w-full rounded-3xl mb-10 border border-gray-100 shadow-xl">` : ''}
+                    <div class="prose-custom">
                         ${marked.parse(finalMarkdown)}
                     </div>
                 `;
-            } catch (err) { eventBody.innerHTML = "Error loading content."; }
+            } catch (err) { 
+                eventBody.innerHTML = "<p class='text-red-500'>Error loading event content. Please check your connection.</p>"; 
+            }
         }
 
         async function fetchEvents() {
             try {
                 const response = await fetch(`https://api.github.com/repos/${GITHUB_ORG}/${REPO_NAME}/contents/events`);
                 const files = await response.json();
+                
+                if(!Array.isArray(files)) throw new Error("Not a folder");
+
                 const eventFiles = files.filter(file => file.name.endsWith('.md'));
                 eventGrid.innerHTML = ''; 
 
                 eventFiles.forEach(file => {
                     const card = document.createElement('div');
-                    card.className = "event-card p-8 rounded-2xl cursor-pointer";
-                    const cleanTitle = file.name.replace('.md', '').split('-').slice(3).join(' ') || file.name.replace('.md', '');
+                    card.className = "event-card p-8 rounded-3xl cursor-pointer group";
+                    
+                    // Simple title formatting
+                    const cleanTitle = file.name.replace('.md', '').split('-').filter(p => isNaN(p)).join(' ');
 
                     card.innerHTML = `
-                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mb-6">
-                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2"></path></svg>
+                        <div class="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-100 transition-colors">
+                            <svg class="w-6 h-6 text-sky-600 group-hover:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-4 capitalize">${cleanTitle}</h3>
-                        <span class="text-xs font-black text-blue-400 tracking-widest">DETAILS →</span>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 capitalize leading-snug">${cleanTitle}</h3>
+                        <span class="text-xs font-black text-sky-600 tracking-widest group-hover:text-emerald-600 transition-colors">VIEW EVENT →</span>
                     `;
                     card.onclick = () => readEvent(file.download_url);
                     eventGrid.appendChild(card);
                 });
-            } catch (error) { eventGrid.innerHTML = "Failed to load."; }
+            } catch (error) { 
+                eventGrid.innerHTML = "<div class='col-span-full text-center py-10 text-gray-400'>No events found in the directory.</div>"; 
+            }
         }
         fetchEvents();
     </script>
