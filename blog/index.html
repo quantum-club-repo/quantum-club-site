@@ -94,6 +94,27 @@
         postContent.innerHTML = "<p class='text-red-500'>The subatomic link failed. Could not load content.</p>";
     }
 }
+        // 2. Format the Date nicely
+        const dateObj = metadata.date ? new Date(metadata.date) : new Date();
+        const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+        // 3. Inject the beautiful HTML
+        postContent.innerHTML = `
+            <h1 class="post-title capitalize">${metadata.title || 'Untitled Post'}</h1>
+            <div class="post-meta">
+                <span>By ${metadata.author || 'Quantum Member'}</span> • 
+                <span>${formattedDate}</span>
+            </div>
+            ${metadata.thumbnail ? `<img src="${metadata.thumbnail}" class="w-full h-64 object-cover rounded-2xl mb-10 border border-gray-800">` : ''}
+            <div class="post-body">
+                ${marked.parse(finalMarkdown)}
+            </div>
+        `;
+
+    } catch (err) {
+        postContent.innerHTML = "<p class='text-red-500'>The subatomic link failed. Could not load content.</p>";
+    }
+}
 
         async function fetchBlogs() {
             try {
