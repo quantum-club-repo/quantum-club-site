@@ -134,49 +134,45 @@
   const GITHUB_ORG = 'quantum-club-repo'; 
   const REPO_NAME = 'quantum-club-site';
 
-  async function updateHomePreviews() {
+ async function updateHomePreviews() {
       const blogTitleEl = document.getElementById('latest-blog-title');
       const eventTitleEl = document.getElementById('latest-event-title');
 
       try {
-          // Fetch Blog Data
+          // 1. Fetch Blogs - Get the most recent one by date/filename
           const blogRes = await fetch(`https://api.github.com/repos/${GITHUB_ORG}/${REPO_NAME}/contents/blog`);
           const blogFiles = await blogRes.json();
           
           if (Array.isArray(blogFiles)) {
-              // Filter for markdown files and sort to get the last one
-              const posts = blogFiles.filter(f => f.name.endsWith('.md'));
+              const posts = blogFiles.filter(f => f.name.endsWith('.md')).sort(); 
               if (posts.length > 0) {
-                  const latest = posts[posts.length - 1]; // Get the last file in the folder
+                  const latest = posts[posts.length - 1]; // Grabs the last one alphabetically (newest date)
                   const cleanTitle = latest.name.replace('.md', '').split('-').filter(p => isNaN(p)).join(' ');
                   blogTitleEl.innerText = cleanTitle;
-              } else {
-                  blogTitleEl.innerText = "No Posts Yet";
               }
           }
 
-          // Fetch Event Data
+          // 2. Fetch Events - Find the "Current" or "Next" event
           const eventRes = await fetch(`https://api.github.com/repos/${GITHUB_ORG}/${REPO_NAME}/contents/events`);
           const eventFiles = await eventRes.json();
           
           if (Array.isArray(eventFiles)) {
-              const events = eventFiles.filter(f => f.name.endsWith('.md'));
+              const events = eventFiles.filter(f => f.name.endsWith('.md')).sort();
               if (events.length > 0) {
-                  const latest = events[events.length - 1];
+                  // We show the latest one added. 
+                  // If you want to show "Upcoming", we'd need to parse the dates inside the files.
+                  const latest = events[events.length - 1]; 
                   const cleanTitle = latest.name.replace('.md', '').split('-').filter(p => isNaN(p)).join(' ');
                   eventTitleEl.innerText = cleanTitle;
-              } else {
-                  eventTitleEl.innerText = "No Events Scheduled";
               }
           }
       } catch (e) {
-          console.error("GitHub Fetch Error:", e);
-          blogTitleEl.innerText = "Database Connection Lost";
-          eventTitleEl.innerText = "Database Connection Lost";
+          console.error("Fetch Error:", e);
+          blogTitleEl.innerText = "Feed Temporarily Unavailable";
+          eventTitleEl.innerText = "Feed Temporarily Unavailable";
       }
   }
 
-  // Execute after a tiny delay to ensure DOM is fully ready
   window.addEventListener('DOMContentLoaded', updateHomePreviews);
     </script>
 </body>
