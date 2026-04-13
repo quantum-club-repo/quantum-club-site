@@ -2,10 +2,9 @@ backend:
   name: github
   repo: quantum-club-repo/quantum-club-site
   branch: main
-  # Add this line to handle the authentication via a proxy
-  base_url: https://vercel.com/tejmnambiars-projects/quantumclubgcek/GVrHvP1yCS4QEYoaJ4Q1GGXMaWv2
+  # This should be your Vercel Proxy URL
+  base_url: https://quantum-admin-gatekeeper.vercel.app 
   auth_endpoint: /auth
-
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
 
