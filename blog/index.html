@@ -6,10 +6,59 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#030712] text-white p-10">
-    <nav class="mb-10"><a href="/" class="text-purple-400">← Back to Home</a></nav>
-    <h1 class="text-4xl font-bold mb-6">Quantum Insights & Writings</h1>
-    <p class="text-gray-400">Articles and research notes from our members.</p>
+    <nav class="mb-10"><a href="/" class="text-purple-400 font-bold">← Back to Home</a></nav>
+    <h1 class="text-4xl font-bold mb-6">Quantum Insights</h1>
     
-    <div id="blog-list" class="mt-8 space-y-6"></div>
+    <div id="blog-list" class="grid gap-6">
+        <p id="loading" class="text-gray-500 italic">Scanning for new posts...</p>
+    </div>
+
+    <script>
+        // Replace 'your-username' and 'your-repo' with your actual GitHub info
+        const GITHUB_USERNAME = 'your-username'; 
+        const REPO_NAME = 'quantum-club-site';
+        const blogContainer = document.getElementById('blog-list');
+
+        async function fetchBlogs() {
+            try {
+                // This fetches the list of files in your 'blog' folder from GitHub
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/blog`);
+                const files = await response.json();
+
+                // Filter out the index.html itself
+                const posts = files.filter(file => file.name !== 'index.html');
+
+                if (posts.length === 0) {
+                    blogContainer.innerHTML = "<p class='text-gray-500'>No posts found yet. Use the Admin panel to write your first insight!</p>";
+                    return;
+                }
+
+                blogContainer.innerHTML = ''; // Clear loading text
+
+                posts.forEach(post => {
+                    const postCard = document.createElement('div');
+                    postCard.className = "p-6 bg-gray-900 border border-gray-800 rounded-xl hover:border-purple-500 transition cursor-pointer";
+                    
+                    // This formats the filename (e.g., "my-first-post.md") into a nice title
+                    const title = post.name.replace('.md', '').replace(/-/g, ' ');
+                    
+                    postCard.innerHTML = `
+                        <h2 class="text-2xl font-bold capitalize">${title}</h2>
+                        <p class="text-purple-400 mt-2 text-sm">Read Article →</p>
+                    `;
+                    
+                    // When clicked, it opens the raw file or a viewer
+                    postCard.onclick = () => window.location.href = post.html_url;
+                    blogContainer.appendChild(postCard);
+                });
+
+            } catch (error) {
+                console.error('Error fetching blogs:', error);
+                blogContainer.innerHTML = "<p class='text-red-500'>Error loading posts. Make sure the 'blog' folder exists on GitHub.</p>";
+            }
+        }
+
+        fetchBlogs();
+    </script>
 </body>
 </html>
