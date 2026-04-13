@@ -1,6 +1,8 @@
 backend:
-  name: git-gateway
-  branch: main # Ensure this matches your GitHub branch name
+  name: github
+  repo: quantum-club-repo/quantum-club-site # Path to your repo
+  branch: main # or master
+  base_url: https://api.github.com
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
