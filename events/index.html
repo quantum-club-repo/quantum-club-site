@@ -64,3 +64,144 @@
     </style>
 </head>
 <body class="antialiased">
+
+    <nav class="fixed top-0 w-full z-50 glass-nav border-b border-gray-800 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="/" class="font-black tracking-tighter text-xl">QUANTUM<span class="text-purple-500">.</span></a>
+            <button id="back-btn" onclick="showGrid()" class="hidden text-sm font-bold text-purple-400 hover:text-white transition">
+                ← BACK TO EVENTS
+            </button>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            
+            <div id="grid-view">
+                <header class="max-w-2xl mb-16">
+                    <h1 class="text-5xl font-black mb-6">Upcoming <span class="text-purple-500">&</span> Past Events</h1>
+                    <p class="text-gray-400 text-lg">Join our hands-on workshops, technical symposiums, and expert talks at Government College of Engineering Kannur.</p>
+                </header>
+
+                <div id="event-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="col-span-full py-20 text-center text-gray-600 animate-pulse italic">
+                        Synchronizing event database...
+                    </div>
+                </div>
+            </div>
+
+            <div id="reader-view" class="hidden max-w-3xl mx-auto">
+                <article id="event-body" class="event-content">
+                    </article>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // CONFIGURATION - Update these to your repo details!
+        const GITHUB_ORG = 'quantum-club-repo'; 
+        const REPO_NAME = 'quantum-club-site';
+        
+        const eventGrid = document.getElementById('event-grid');
+        const gridView = document.getElementById('grid-view');
+        const readerView = document.getElementById('reader-view');
+        const eventBody = document.getElementById('event-body');
+        const backBtn = document.getElementById('back-btn');
+
+        function showGrid() {
+            gridView.classList.remove('hidden');
+            readerView.classList.add('hidden');
+            backBtn.classList.add('hidden');
+            window.scrollTo(0,0);
+        }
+
+        async function readEvent(downloadUrl) {
+            gridView.classList.add('hidden');
+            readerView.classList.remove('hidden');
+            backBtn.classList.remove('hidden');
+            eventBody.innerHTML = "<p class='text-purple-400 text-center py-20 animate-bounce'>Opening Event Dossier...</p>";
+
+            try {
+                const response = await fetch(downloadUrl);
+                const rawText = await response.text();
+
+                // Separate Frontmatter logic
+                const parts = rawText.split('---');
+                let finalMarkdown = rawText;
+                let meta = {};
+
+                if (parts.length >= 3) {
+                    const yaml = parts[1];
+                    finalMarkdown = parts.slice(2).join('---');
+                    yaml.split('\n').forEach(line => {
+                        const [key, ...val] = line.split(':');
+                        if (key) meta[key.trim()] = val.join(':').trim();
+                    });
+                }
+
+                eventBody.innerHTML = `
+                    <div class="event-badge">Technical Session</div>
+                    <h1 class="event-header-title capitalize">${meta.title || 'Quantum Event'}</h1>
+                    <p class="text-gray-500 mb-10 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        ${meta.date ? new Date(meta.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Date TBA'}
+                    </p>
+                    ${meta.thumbnail ? `<img src="${meta.thumbnail}" class="w-full rounded-3xl mb-12 shadow-2xl border border-gray-800">` : ''}
+                    <div class="prose-render">
+                        ${marked.parse(finalMarkdown)}
+                    </div>
+                `;
+                window.scrollTo(0,0);
+            } catch (err) {
+                eventBody.innerHTML = "<p class='text-red-500'>Error: Could not retrieve event details.</p>";
+            }
+        }
+
+        async function fetchEvents() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_ORG}/${REPO_NAME}/contents/events`);
+                const files = await response.json();
+                
+                // Only show markdown files and ignore index.html
+                const eventFiles = files.filter(file => file.name.endsWith('.md'));
+
+                if (eventFiles.length === 0) {
+                    eventGrid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No events currently listed in the archives.</p>";
+                    return;
+                }
+
+                eventGrid.innerHTML = ''; 
+
+                eventFiles.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = "event-card p-8 rounded-3xl flex flex-col justify-between";
+                    
+                    const cleanTitle = file.name.replace('.md', '').split('-').slice(3).join(' ') || file.name.replace('.md', '');
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-bold capitalize text-white mb-2 leading-tight">${cleanTitle}</h3>
+                            <p class="text-gray-500 text-sm mb-8">View workshop roadmap and session details.</p>
+                        </div>
+                        <button class="text-xs font-black tracking-widest text-purple-400 hover:text-white transition text-left">
+                            EXPLORE DETAILS →
+                        </button>
+                    `;
+                    
+                    card.onclick = () => readEvent(file.download_url);
+                    eventGrid.appendChild(card);
+                });
+
+            } catch (error) {
+                eventGrid.innerHTML = "<p class='col-span-full text-center text-red-500'>Failed to connect to GitHub Event Stream.</p>";
+            }
+        }
+
+        fetchEvents();
+    </script>
+</body>
+</html>
