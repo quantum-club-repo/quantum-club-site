@@ -3,7 +3,7 @@ backend:
   repo: quantum-club-repo/quantum-club-site
   branch: main
   # Add this line to handle the authentication via a proxy
-  base_url: https://decap-cms-github-backend.vercel.app
+  base_url: https://vercel.com/tejmnambiars-projects/quantumclubgcek/GVrHvP1yCS4QEYoaJ4Q1GGXMaWv2
   auth_endpoint: /auth
 
 media_folder: "assets/uploads"
