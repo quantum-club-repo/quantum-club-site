@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: quantum-club-repo/quantum-club-site # Ensure this matches your repo name
+  repo: quantum-club-repo/quantum-club-site
   branch: main
-  # This MUST be the URL of your second Vercel project (the Gatekeeper)
+  # Use the short production URL, not the long one from your screenshot
   base_url: https://quantum-gatekeeper.vercel.app 
   auth_endpoint: /auth
 
