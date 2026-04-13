@@ -2,11 +2,8 @@ backend:
   name: github
   repo: quantum-club-repo/quantum-club-site
   branch: main
-  # This should be your Vercel Proxy URL
-  base_url: https://quantum-admin-gatekeeper.vercel.app 
+  base_url: https://quantum-gatekeeper.vercel.app # Replace with your actual URL
   auth_endpoint: /auth
-media_folder: "assets/uploads"
-public_folder: "/assets/uploads"
 
 collections:
   - name: "blog"
