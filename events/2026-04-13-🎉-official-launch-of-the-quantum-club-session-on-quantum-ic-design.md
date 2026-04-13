@@ -1,6 +1,6 @@
 ---
 title: 🎉 Official Launch of the Quantum Club & Session on Quantum IC Design
-date: 2026-04-14T02:24:00.000+05:30
+date: 2026-04-13T02:24:00.000+05:30
 thumbnail: /assets/images/uploads/whatsapp-image-2026-04-13-at-6.43.56-pm.jpeg
 ---
 🎉 We are excited to announce the **official launch of the Quantum Club** at Government College of Engineering!
