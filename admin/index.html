@@ -7,13 +7,37 @@
   <link href="config.yml" type="text/yaml" rel="cms-config-url">
   
   <style>
-    /* Customizing the login screen to match your theme */
-    body { background-color: #020617 !important; }
-    .nc-github-login-button {
-      background-color: #10b981 !important; /* Emerald Green */
+    /* 1. Background: Light and clean to match the new theme */
+    body { 
+      background-color: #f9fafb !important; /* gray-50 */
+    }
+
+    /* 2. Login Button: Using our new Brand Blue (Sky-500) */
+    .nc-github-login-button, 
+    button[class*="loginButton"] {
+      background-color: #0ea5e9 !important; /* Brand Blue */
       color: #ffffff !important;
-      font-weight: bold !important;
-      border-radius: 8px !important;
+      font-weight: 600 !important;
+      border-radius: 9999px !important; /* Pill shape for modern look */
+      padding: 12px 24px !important;
+      border: none !important;
+      box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2) !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .nc-github-login-button:hover,
+    button[class*="loginButton"]:hover {
+      background-color: #0284c7 !important; /* Darker blue on hover */
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3) !important;
+    }
+
+    /* 3. Styling the Netlify Identity Widget container */
+    #nc-root > div > section {
+      background: white !important;
+      border-radius: 24px !important;
+      border: 1px solid #e5e7eb !important; /* gray-200 */
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05) !important;
     }
   </style>
 </head>
