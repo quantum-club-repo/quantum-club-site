@@ -1,34 +1,32 @@
 backend:
-  name: github
-  repo: quantum-club-repo/quantum-club-site
-  branch: main
-  # Use the short production URL, not the long one from your screenshot
-  base_url: https://quantum-gatekeeper.vercel.app 
-  auth_endpoint: /auth
+  name: git-gateway
+  branch: main # Ensure this matches your GitHub branch
 
-# Fixes: 'media_folder' and 'media_library' errors
+# Where uploaded images will be stored
 media_folder: "assets/images/uploads"
+# How the images will be referenced in your Markdown/HTML
 public_folder: "/assets/images/uploads"
 
-# Required for the CMS to actually show you an interface
 collections:
   - name: "blog"
     label: "Blog Posts"
-    folder: "content/blog"
+    folder: "blog" # Changed to match your fetch script which looks in /blog
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
+      - { label: "Author", name: "author", widget: "string", default: "Quantum Researcher" }
       - { label: "Publish Date", name: "date", widget: "datetime" }
       - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
       - { label: "Body", name: "body", widget: "markdown" }
 
   - name: "events"
     label: "Events"
-    folder: "content/events"
+    folder: "events" # Changed to match your fetch script which looks in /events
     create: true
-    slug: "{{slug}}"
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Event Name", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Description", name: "body", widget: "markdown" }
+      - { label: "Event Date", name: "date", widget: "datetime" }
+      - { label: "Thumbnail", name: "thumbnail", widget: "image", required: false }
+      - { label: "Event Details", name: "body", widget: "markdown" }
